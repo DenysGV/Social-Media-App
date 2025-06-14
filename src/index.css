@@ -73,7 +73,7 @@ input {
 }
 
 .button {
-   @apply py-3 w-full flex justify-center items-center text-xs border border-solid border-color-highlight text-color-primary-text rounded-2xl cursor-pointer bg-color-secondary-bg
+   @apply py-2 w-full flex justify-center items-center text-sm border border-solid border-color-highlight text-color-primary-text rounded-2xl cursor-pointer bg-color-secondary-bg
 }
 
 .button-mini {

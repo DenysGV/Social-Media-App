@@ -4,14 +4,14 @@ const PostBuilder = ({ type }: { type: string }) => {
    const [fileInput, setFileInput] = useState<File | null>(null)
    const [photoPreview, setPhotoPreview] = useState<string>('')
 
-   const setFileHandller = (e: React.ChangeEvent<HTMLInputElement>) => {
+   const setFilehandler = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files?.length) {
          const file = e.target.files[0]
          setFileInput(file)
       }
    }
 
-   const resetPhotoHandller = () => {
+   const resetPhotohandler = () => {
       setFileInput(null)
       setPhotoPreview('')
    }
@@ -50,7 +50,7 @@ const PostBuilder = ({ type }: { type: string }) => {
                   <path className="stroke-color-primary-text" d="M2.5 13.3333L6.66667 9.16667C7.44 8.4225 8.39333 8.4225 9.16667 9.16667L12.5 12.5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                   <path className="stroke-color-primary-text" d="M11.6667 11.6667L12.5001 10.8333C13.0442 10.3092 13.6776 10.1542 14.2751 10.3675M15.8334 13.3333V18.3333M15.8334 18.3333L18.3334 15.8333M15.8334 18.3333L13.3334 15.8333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                </svg>
-               <input type="file" onChange={(e) => { setFileHandller(e) }} className="hidden" />
+               <input type="file" onChange={(e) => { setFilehandler(e) }} className="hidden" />
             </label>}
             <div className="w-9 h-9 rounded-full bg-color-secondary-bg flex-shrink-0 flex items-center justify-center cursor-pointer">
                <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -60,7 +60,7 @@ const PostBuilder = ({ type }: { type: string }) => {
          </div>
          {photoPreview && <div className="flex justify-center w-3/4 py-3 relative mx-auto">
             <img className="w-full rounded-2xl" src={photoPreview} alt="uploaded photo" />
-            <div onClick={resetPhotoHandller} className="flex absolute top-5 right-2 justify-center items-center flex-shrink-0 w-5 h-5 rounded-full bg-color-secondary-bg cursor-pointer">
+            <div onClick={resetPhotohandler} className="flex absolute top-5 right-2 justify-center items-center flex-shrink-0 w-5 h-5 rounded-full bg-color-secondary-bg cursor-pointer">
                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path className="stroke-color-primary-text" d="M1 1L10 10M1 10L10 1" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                </svg>
