@@ -83,3 +83,10 @@ input {
 .transition {
    transition: all 0.3s;
 }
+
+.alert_dangerous {
+   @apply text-sm text-red-500
+}
+.alert_success {
+   @apply text-sm text-green-500
+}

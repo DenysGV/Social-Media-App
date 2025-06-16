@@ -1,15 +1,51 @@
+import axios from "axios"
 import { useState } from "react"
+import { API_URL } from "../services/apiUrl"
 
-const SideBarLeftSignIn = () => {
+const SideBarLeftSignIn = ({ setVisibleForm, setAuthorized }: { setVisibleForm: Function, setAuthorized: Function }) => {
+   const [username, setUsername] = useState<string>('')
+   const [password, setPassword] = useState<string>('')
+
    const [passwordVisible, setPasswordVisible] = useState<boolean>(false)
+   const [dangerousAlert, setDangerousAlert] = useState<string>('')
+   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+   const formSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      setIsLoading(true)
+      setDangerousAlert('')
+
+      if (!username || !password) {
+         setDangerousAlert('Fill in all the fields')
+         setIsLoading(false)
+         return
+      }
+
+      try {
+         const res = await axios.get(`${API_URL}users?username=${username}`);
+
+         if (res.data.length) {
+            localStorage.setItem('user', JSON.stringify((res.data[0])))
+            setAuthorized(true)
+         }
+
+         setUsername('')
+         setPassword('')
+      } catch (err) {
+         setDangerousAlert(`Something went wrong`)
+      } finally {
+         setIsLoading(false)
+      }
+   }
 
    return (
-      <div>
+      <form onSubmit={formSubmitHandler}>
          <p className="pb-2 text-color-primary-text text-base">Sign in</p>
          <div className="flex flex-col gap-2">
-            <input type="text" placeholder="username" />
+            {dangerousAlert && <p className="alert_dangerous">{dangerousAlert}</p>}
+            <input value={username} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setUsername(e.target.value) }} type="text" placeholder="username" />
             <div className="relative">
-               <input className="w-full" type={passwordVisible ? `text` : 'password'} placeholder="password" />
+               <input value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setPassword(e.target.value) }} className="w-full" type={passwordVisible ? `text` : 'password'} placeholder="password" />
                <div className="absolute top-2 right-2.5 cursor-pointer">
                   {passwordVisible ?
                      <svg onClick={() => { setPasswordVisible(false) }} width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,10 +63,10 @@ const SideBarLeftSignIn = () => {
          </div>
          <div className="pt-2 pb-4 flex justify-between">
             <p className="text-xs text-color-primary-text">Not registered yet ?</p>
-            <p className="text-xs text-color-primary-text cursor-pointer">sign up</p>
+            <p onClick={() => { setVisibleForm('sign up') }} className="text-xs text-color-primary-text cursor-pointer">sign up</p>
          </div>
-         <div className="button">Sign in</div>
-      </div>
+         <button type="submit" disabled={isLoading} className="button">Sign in</button>
+      </form>
    )
 }
 

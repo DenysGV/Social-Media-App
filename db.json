@@ -1,6 +1,17 @@
 {
    "posts": [],
-   "users": [],
+   "users": [
+      {
+         "id": 1750080374182,
+         "name": "Denys",
+         "username": "denys pro",
+         "about": "",
+         "skills": [],
+         "email": "denys@gmail.com",
+         "password": "1234"
+      }
+   ],
    "likes": [],
-   "comments": []
+   "comments": [],
+   "reports": []
 }

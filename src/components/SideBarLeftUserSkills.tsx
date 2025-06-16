@@ -1,13 +1,20 @@
+import type { IUser } from "../types/types"
 import SideBarLeftUserSkillsItem from "./SideBarLeftUserSkillsItem"
 
 const SideBarLeftUserSkills = () => {
+   const storageUser = localStorage.getItem('user')
+   const userAuthorized: IUser | null = storageUser ? JSON.parse(storageUser) : null
+
    return (
       <div className="pt-5">
          <p className="text-base pb-2.5 text-color-primary-text">Skills</p>
          <div className="flex flex-wrap gap-2.5">
-            <SideBarLeftUserSkillsItem skillName={`UI/UX Design`} type="fixed" />
-            <SideBarLeftUserSkillsItem skillName={`UI/UX Design`} type="fixed" />
-            <SideBarLeftUserSkillsItem skillName={`UI/UX Design`} type="fixed" />
+            {userAuthorized?.skills.length ?
+               userAuthorized?.skills.map(item => (
+                  <SideBarLeftUserSkillsItem skillName={item} type="fixed" />
+               )) :
+               <p className="text-color-primary-text text-xs">Add skills at profile settings</p>
+            }
          </div>
       </div>
    )

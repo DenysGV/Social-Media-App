@@ -1,17 +1,63 @@
 import { useState } from "react"
+import { useCreateUserMutation } from "../services/usersApi"
+import type { IUser } from "../types/types"
 
-const SideBarLeftSignUp = () => {
+const SideBarLeftSignUp = ({ setVisibleForm, setAuthorized }: { setVisibleForm: Function, setAuthorized: Function }) => {
+   const [name, setName] = useState<string>('')
+   const [email, setEmail] = useState<string>('')
+   const [username, setUsername] = useState<string>('')
+   const [password, setPassword] = useState<string>('')
+
    const [passwordVisible, setPasswordVisible] = useState<boolean>(false)
+   const [dangerousAlert, setDangerousAlert] = useState<string>('')
+
+   const [createUser, { isLoading, isSuccess, error }] = useCreateUserMutation()
+
+   const formSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      setDangerousAlert('')
+
+      if (!name || !email || !username || !password) {
+         setDangerousAlert('Fill in all the fields')
+         return
+      }
+
+      try {
+         const newUser: IUser = {
+            id: new Date().getTime(),
+            name,
+            username,
+            about: '',
+            skills: [],
+            email,
+            password,
+         }
+
+         await createUser(newUser).unwrap()
+
+         localStorage.setItem('user', JSON.stringify(newUser))
+         setAuthorized(true)
+
+         setName('')
+         setEmail('')
+         setUsername('')
+         setPassword('')
+      } catch (err) {
+         setDangerousAlert(`Error creating account: ${(error as any)?.data?.message | (error as any)?.error}`)
+      }
+   }
 
    return (
-      <div>
+      <form onSubmit={formSubmitHandler}>
          <p className="pb-2 text-color-primary-text text-base">Sign up</p>
          <div className="flex flex-col gap-2">
-            <input type="text" placeholder="name" />
-            <input type="email" placeholder="email" />
-            <input type="text" placeholder="username" />
+            {dangerousAlert && <p className="alert_dangerous">{dangerousAlert}</p>}
+            {isSuccess && <p className="alert_success">Account created successfully</p>}
+            <input value={name} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setName(e.target.value) }} type="text" placeholder="name" />
+            <input value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setEmail(e.target.value) }} type="email" placeholder="email" />
+            <input value={username} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setUsername(e.target.value) }} type="text" placeholder="username" />
             <div className="relative">
-               <input className="w-full" type={passwordVisible ? `text` : 'password'} placeholder="password" />
+               <input value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setPassword(e.target.value) }} className="w-full" type={passwordVisible ? `text` : 'password'} placeholder="password" />
                <div className="absolute top-2 right-2.5 cursor-pointer">
                   {passwordVisible ?
                      <svg onClick={() => { setPasswordVisible(false) }} width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -29,10 +75,10 @@ const SideBarLeftSignUp = () => {
          </div>
          <div className="pt-2 pb-4 flex justify-between">
             <p className="text-xs text-color-primary-text">Already have an account ?</p>
-            <p className="text-xs text-color-primary-text cursor-pointer">sign in</p>
+            <p onClick={() => { setVisibleForm('sign in') }} className="text-xs text-color-primary-text cursor-pointer">sign in</p>
          </div>
-         <div className="button">Sign in</div>
-      </div>
+         <button type="submit" className="button" disabled={isLoading}>Sign in</button>
+      </form>
    )
 }
 
