@@ -11,7 +11,7 @@ export const reportsApi = createApi({
          query: () => 'reports',
          providesTags: ['reports']
       }),
-      deleteReport: builder.mutation<void, number>({
+      deleteReport: builder.mutation<void, string>({
          query: (id) => ({
             url: `reports/${id}`,
             method: 'DELETE'

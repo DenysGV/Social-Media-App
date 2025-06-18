@@ -11,7 +11,7 @@ export const postsApi = createApi({
          query: () => 'posts',
          providesTags: ['posts']
       }),
-      getPostById: builder.query<IPost, number>({
+      getPostById: builder.query<IPost, string>({
          query: (id) => `posts/${id}`,
          providesTags: (_, __, id) => [{ type: 'posts', id }]
       }),
@@ -23,7 +23,7 @@ export const postsApi = createApi({
          }),
          invalidatesTags: ['posts'],
       }),
-      deletePost: builder.mutation<void, number>({
+      deletePost: builder.mutation<void, string>({
          query: (id) => ({
             url: `posts/${id}`,
             method: 'DELETE'

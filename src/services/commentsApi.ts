@@ -7,6 +7,10 @@ export const commentsApi = createApi({
    baseQuery: fetchBaseQuery({ baseUrl: API_URL }),
    tagTypes: ['comments'],
    endpoints: (builder) => ({
+      getComments: builder.query<IComment[], string>({
+         query: (id) => `comments?postId=${id}`,
+         providesTags: ['comments']
+      }),
       createComment: builder.mutation<IComment, IComment>({
          query: (newComment) => ({
             url: 'comments',
@@ -19,5 +23,6 @@ export const commentsApi = createApi({
 })
 
 export const {
+   useGetCommentsQuery,
    useCreateCommentMutation
 } = commentsApi

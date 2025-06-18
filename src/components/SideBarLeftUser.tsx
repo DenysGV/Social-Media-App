@@ -1,13 +1,15 @@
+import { useAppDispatch } from "../store/hooks"
+import { logOut } from "../store/slices/userSlice"
 import type { IUser } from "../types/types"
 import SideBarLeftUserSkills from "./SideBarLeftUserSkills"
 
-const SideBarLeftUser = ({ setAuthorized }: { setAuthorized: Function }) => {
+const SideBarLeftUser = () => {
    const storageUser = localStorage.getItem('user')
    const userAuthorized: IUser | null = storageUser ? JSON.parse(storageUser) : null
+   const dispatch = useAppDispatch()
 
    const leaveHandler = () => {
-      setAuthorized(false)
-      localStorage.removeItem('user')
+      dispatch(logOut())
    }
 
    return (

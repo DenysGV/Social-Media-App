@@ -4,53 +4,101 @@ import PostBuilder from "./PostBuilder"
 import PostItemActions from "./PostItemActions"
 import PostItemComments from "./PostItemComments"
 import PostItemUser from "./PostItemUser"
+import type { IComment, IPost, IUser } from "../types/types"
+import { useGetUserByIdQuery } from "../services/usersApi"
+import { useGetPostByIdQuery } from "../services/postsApi"
+import { useGetCommentsQuery } from "../services/commentsApi"
 
-const PostItem = ({ type }: { type: string }) => {
+const PostItem = ({ userId, id, repostPostId, content, createTimestamp }: IPost) => {
    const [ownerModal, setOwnerModal] = useState<boolean>(false)
    const [userModal, setUserModal] = useState<boolean>(false)
+   const [repost, setRepost] = useState<string>('')
+   const [reply, setReply] = useState<IUser | null>(null)
+   let repostData: IPost | null = null
+
+   const { data } = useGetUserByIdQuery(userId)
+   const user: IUser | undefined = data
+
+   const [showComments, setShowComments] = useState<boolean>(false)
+
+   const { data: dataComments } = useGetCommentsQuery(id)
+   let comments: IComment[] = []
+   if (dataComments) {
+      comments = dataComments
+   }
+
+   const repostHandler = (resetRepost?: boolean) => {
+      if (resetRepost) {
+         setRepost('')
+         return
+      }
+
+      if (user) {
+         setRepost(user.username)
+      }
+   }
+
+   if (repostPostId && !repost) {
+      const { data } = useGetPostByIdQuery(repostPostId)
+      if (data) {
+         repostData = data
+      }
+   }
+
+   const replyHandler = (userReply: IUser, resetRepost?: boolean) => {
+      if (resetRepost) {
+         setReply(null)
+         return
+      }
+
+      if (userReply) {
+         setReply(userReply)
+      }
+   }
 
    return (
-      <>
-         <div className="mt-5 p-3 bg-color-primary-bg rounded-2xl">
+      <div className="mb-5">
+         <div className="p-3 bg-color-primary-bg rounded-2xl">
             <div className="flex justify-between">
-               <PostItemUser />
+               <PostItemUser userId={userId} createTimestamp={createTimestamp} />
                <div className="flex gap-1 mt-1 mr-1 cursor-pointer">
                   <div className="w-1 h-1 bg-color-primary-text rounded-full"></div>
                   <div className="w-1 h-1 bg-color-primary-text rounded-full"></div>
                   <div className="w-1 h-1 bg-color-primary-text rounded-full"></div>
                </div>
             </div>
-            <p className="text-xs text-color-primary-text py-3 pl-1">Hello, i`m UX/UI designer. Open to the new projects</p>
-            <div className="w-full mb-2">
-               <img src="/post-img.png" alt="post img" className="w-full rounded-2xl" />
-            </div>
-            {type == "repost" && <div className="flex gap-5">
+            {content.text && <p className="text-xs text-color-primary-text pt-3 pl-1">{content.text}</p>}
+            {content.img && <div className="w-full mb-2 pt-3">
+               <img src={`data:image/png;base64${content.img}`} alt="post img" className="w-full rounded-2xl" />
+            </div>}
+            {repostData && <div className="flex gap-5">
                <div className="border-r border-solid border-color-secondary-bg ml-2"></div>
                <div className="py-2 cursor-pointer">
                   <div className="w-fit">
-                     <PostItemUser />
+                     <PostItemUser userId={repostData.userId} createTimestamp={repostData.createTimestamp} />
                   </div>
-                  <p className="text-xs text-color-primary-text py-3 pl-1">Hello, i`m UX/UI designer. Open to the new projects</p>
-                  <div className="w-full">
-                     <img src="/post-img.png" alt="post img" className="w-full rounded-2xl" />
-                  </div>
+                  {repostData.content.text && <p className="text-xs text-color-primary-text pt-3 pl-1">{repostData.content.text}</p>}
+                  {repostData.content.img && <div className="w-full pt-3">
+                     <img src={`${repostData.content.img}`} alt="post img" className="w-full rounded-2xl" />
+                  </div>}
                </div>
             </div>}
-            <PostItemActions />
-            <PostItemComments />
+            <PostItemActions repostHandler={repostHandler} setShowComments={setShowComments} showRepostButton={!repostPostId} postId={id} commentsLength={comments?.length} />
+            {showComments && <PostItemComments replyHandler={replyHandler} comments={comments} />}
             <hr className="border-color-secondary-bg" />
 
             <div className="mt-3">
-               <PostBuilder type={'comment'} />
+               <PostBuilder type={'comment'} username={reply?.username} replyId={reply?.id} replyHandler={replyHandler} postId={id} />
             </div>
          </div>
-         <div className="mt-3 p-3 bg-color-primary-bg rounded-2xl">
-            <PostBuilder type={'repost'} />
-         </div>
+
+         {repost && <div className="mt-3 p-3 bg-color-primary-bg rounded-2xl">
+            <PostBuilder type={'repost'} repostHandler={repostHandler} username={user?.username} postId={id} />
+         </div>}
 
          <Modal open={userModal} setOpen={setUserModal}>
             <form onSubmit={(e) => { }}>
-               <p className="text-sm text-color-primary-text pb-2">Actions {type}</p>
+               <p className="text-sm text-color-primary-text pb-2">Actions</p>
                <div className="flex gap-2">
                   <div className="py-2 px-3 w-full rounded-2xl bg-color-secondary-bg">
                      <p className="text-color-primary-text text-sm opacity-80">https://social-media.com/posts/1145</p>
@@ -84,7 +132,7 @@ const PostItem = ({ type }: { type: string }) => {
 
          <Modal open={ownerModal} setOpen={setOwnerModal}>
             <form onSubmit={(e) => { }}>
-               <p className="text-sm text-color-primary-text pb-2">Actions {type}</p>
+               <p className="text-sm text-color-primary-text pb-2">Actions</p>
                <div className="flex gap-2">
                   <div className="py-2 px-3 w-full rounded-2xl bg-color-secondary-bg">
                      <p className="text-color-primary-text text-sm opacity-80">https://social-media.com/posts/1145</p>
@@ -113,7 +161,7 @@ const PostItem = ({ type }: { type: string }) => {
                </div>
             </form>
          </Modal>
-      </>
+      </div>
    )
 }
 

@@ -1,15 +1,16 @@
 export interface IPost {
-   id: number,
-   userId: number,
+   id: string,
+   userId: string,
+   createTimestamp: number,
    content: {
-      text: string,
-      img?: Base64URLString,
+      text?: string,
+      img?: string | ArrayBuffer,
    },
-   repostPostId?: number
+   repostPostId?: string
 }
 
 export interface IUser {
-   id: number,
+   id: string,
    name: string,
    username: string,
    about: string,
@@ -20,23 +21,23 @@ export interface IUser {
 }
 
 export interface ILike {
-   id: number,
-   type: 'post' | 'comment',
-   postId?: number,
-   commentId?: number,
-   userId: number
+   id: string,
+   postId?: string,
+   commentId?: string,
+   userId: string
 }
 
 export interface IComment {
-   id: number,
-   postId: number,
-   userId: number,
+   id: string,
+   postId: string,
+   userId: string,
    text: string,
-   replyId?: number,
+   replyId?: string,
+   createTimestamp: number,
 }
 
 export interface IReport {
-   postId: number,
-   userId: number,
+   postId: string,
+   userId: string,
    text: string,
 }

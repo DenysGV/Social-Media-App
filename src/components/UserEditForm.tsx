@@ -6,8 +6,6 @@ const UserEditForm = ({ type, onSubmithandler }: { type: string, onSubmithandler
    const password = type == "password" ? useState<boolean>(false) : null
    const [skills, setSkills] = useState<string[]>([])
 
-   console.log(skills);
-
    const onChangehandler = (e: React.ChangeEvent<HTMLInputElement>) => {
       setText(e.target.value)
    }

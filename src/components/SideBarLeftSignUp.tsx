@@ -1,8 +1,10 @@
 import { useState } from "react"
 import { useCreateUserMutation } from "../services/usersApi"
 import type { IUser } from "../types/types"
+import { useAppDispatch } from "../store/hooks"
+import { signIn } from "../store/slices/userSlice"
 
-const SideBarLeftSignUp = ({ setVisibleForm, setAuthorized }: { setVisibleForm: Function, setAuthorized: Function }) => {
+const SideBarLeftSignUp = ({ setVisibleForm }: { setVisibleForm: Function }) => {
    const [name, setName] = useState<string>('')
    const [email, setEmail] = useState<string>('')
    const [username, setUsername] = useState<string>('')
@@ -12,6 +14,7 @@ const SideBarLeftSignUp = ({ setVisibleForm, setAuthorized }: { setVisibleForm: 
    const [dangerousAlert, setDangerousAlert] = useState<string>('')
 
    const [createUser, { isLoading, isSuccess, error }] = useCreateUserMutation()
+   const dispatch = useAppDispatch()
 
    const formSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
@@ -22,21 +25,20 @@ const SideBarLeftSignUp = ({ setVisibleForm, setAuthorized }: { setVisibleForm: 
          return
       }
 
-      try {
-         const newUser: IUser = {
-            id: new Date().getTime(),
-            name,
-            username,
-            about: '',
-            skills: [],
-            email,
-            password,
-         }
+      const newUser: IUser = {
+         id: `${new Date().getTime()}`,
+         name,
+         username,
+         about: '',
+         skills: [],
+         email,
+         password,
+      }
 
+      try {
          await createUser(newUser).unwrap()
 
-         localStorage.setItem('user', JSON.stringify(newUser))
-         setAuthorized(true)
+         dispatch(signIn(newUser))
 
          setName('')
          setEmail('')

@@ -15,7 +15,11 @@ export const usersApi = createApi({
          }),
          invalidatesTags: ['users'],
       }),
-      deleteUser: builder.mutation<void, number>({
+      getUserById: builder.query<IUser, string>({
+         query: (id) => `users/${id}`,
+         providesTags: (_, __, id) => [{ type: 'users', id }]
+      }),
+      deleteUser: builder.mutation<void, string>({
          query: (id) => ({
             url: `users/${id}`,
             method: 'DELETE',
@@ -27,5 +31,6 @@ export const usersApi = createApi({
 
 export const {
    useCreateUserMutation,
-   useDeleteUserMutation
+   useGetUserByIdQuery,
+   useDeleteUserMutation,
 } = usersApi

@@ -1,48 +1,150 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useCreatePostMutation } from "../services/postsApi"
+import type { IComment, IPost, IUser } from "../types/types"
+import { useAppSelector } from "../store/hooks"
+import { useCreateCommentMutation } from "../services/commentsApi"
 
-const PostBuilder = ({ type }: { type: string }) => {
-   const [fileInput, setFileInput] = useState<File | null>(null)
-   const [photoPreview, setPhotoPreview] = useState<string>('')
+const PostBuilder = ({ type, postId, replyId, repostHandler, username, replyHandler }: { type: string, postId?: string, replyId?: string, repostHandler?: Function, username?: string, replyHandler?: Function }) => {
+   const [text, setText] = useState<string>('')
+   const [fileInput, setFileInput] = useState<string | ArrayBuffer | null>(null)
 
-   const setFilehandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+   const user: IUser | null = useAppSelector((state) => state.user.user)
+
+   const [dangerousAlert, setDangerousAlert] = useState<string>('')
+
+   const [createPost, { isLoading, isSuccess, error }] = useCreatePostMutation()
+   const [createComment, { isLoading: isLoadingComment, isSuccess: isSuccessComment, error: errorComment }] = useCreateCommentMutation()
+
+   const setFilehandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files?.length) {
          const file = e.target.files[0]
-         setFileInput(file)
+
+         setFileInput(await toBase64(file))
       }
    }
+
+   const toBase64 = (file: File): Promise<string | ArrayBuffer | null> => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+   });
 
    const resetPhotohandler = () => {
       setFileInput(null)
-      setPhotoPreview('')
    }
 
-   useEffect(() => {
-      if (fileInput) {
-         const objectUrl = URL.createObjectURL(fileInput)
-         setPhotoPreview(objectUrl)
+   const submitFormHandler = (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
 
-         // Очистка URL объекта при размонтировании
-         return () => URL.revokeObjectURL(objectUrl)
+      setDangerousAlert('')
+
+      if (type == "comment") {
+         createCommentHandler()
+         return
       }
-   }, [fileInput])
 
+      createPostHandler()
+   }
+
+   const createCommentHandler = async () => {
+      if (!text && !fileInput) {
+         setDangerousAlert('Fill in the comment field')
+         return
+      }
+
+      if (postId && user) {
+         const newComment: IComment = {
+            id: `${new Date().getTime()}`,
+            postId,
+            userId: user.id,
+            text: text,
+            createTimestamp: new Date().getTime(),
+         }
+
+         if (replyId) {
+            newComment.replyId = replyId
+         }
+
+         try {
+            await createComment(newComment).unwrap()
+
+            setText('')
+         } catch (err) {
+            setDangerousAlert(`Error creating comment: ${(errorComment as any)?.data.message | (errorComment as any)?.error}`)
+         }
+      } else {
+         setDangerousAlert(`Sign in to your account`)
+      }
+   }
+
+   const createPostHandler = async () => {
+      if (!text && !fileInput) {
+         setDangerousAlert('Fill in the field or attach a file')
+         return
+      }
+
+      if (user) {
+         const newPost: IPost = {
+            id: `new Date().getTime()`,
+            userId: user?.id,
+            createTimestamp: new Date().getTime(),
+            content: {}
+         }
+
+         if (text) {
+            newPost.content.text = text
+         }
+
+         if (fileInput) {
+            newPost.content.img = fileInput
+         }
+
+         if (username && postId) {
+            newPost.repostPostId = postId
+         }
+
+         try {
+            await createPost(newPost).unwrap()
+
+            resetPhotohandler()
+            setText('')
+         } catch (err) {
+            setDangerousAlert(`Error creating post: ${(error as any)?.data?.message | (error as any)?.error}`)
+         }
+      } else {
+         setDangerousAlert(`Sign in to your account`)
+      }
+   }
+
+   const cancelResponseHandler = () => {
+      if (type == "comment" && replyHandler) {
+         replyHandler(true)
+      }
+
+      if (type == "repost" && repostHandler) {
+         repostHandler(true)
+      }
+   }
 
    return (
       <>
-         <div className="flex gap-3 items-end">
+         {dangerousAlert && <p className="alert_dangerous">{dangerousAlert}</p>}
+         {isSuccess && <p className="alert_success">Post created successfully</p>}
+         {isSuccessComment && <p className="alert_success">Comment created successfully</p>}
+         <form className="flex gap-3 items-end" onSubmit={submitFormHandler}>
             <div className="w-9 h-9 flex-shrink-0">
                <img src="/user-logo.png" alt="user logo" className="w-full h-full" />
             </div>
             <div className="w-full">
-               {(type == "comment" || type == "repost") && <div className="flex gap-2 items-center px-2 py-1 mb-2 bg-color-secondary-bg w-fit rounded-2xl cursor-pointer">
-                  <p className="text-xxs text-color-primary-text opacity-70">{type == "comment" ? "Reply" : "Repost"}: @evgenledo</p>
+               {username && (type == "comment" || type == "repost") && <div onClick={() => { cancelResponseHandler() }} className="flex gap-2 items-center px-2 py-1 mb-2 bg-color-secondary-bg w-fit rounded-2xl cursor-pointer">
+                  <p className="text-xxs text-color-primary-text opacity-70">{type == "comment" ? "Reply" : "Repost"}: @{username}</p>
                   <div className="opacity-70">
                      <svg width="6" height="6" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path className="stroke-color-primary-text" d="M1 1L10 10M1 10L10 1" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                      </svg>
                   </div>
                </div>}
-               <input type="text" placeholder="Post theme" className="w-full" />
+               <input type="text" value={text} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setText(e.target.value) }} placeholder={type == "comment" ? 'Comment...' : "Post theme"} className="w-full" />
             </div>
             {type != "comment" && <label className="w-9 h-9 rounded-full bg-color-secondary-bg flex-shrink-0 flex items-center justify-center cursor-pointer">
                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -52,20 +154,21 @@ const PostBuilder = ({ type }: { type: string }) => {
                </svg>
                <input type="file" onChange={(e) => { setFilehandler(e) }} className="hidden" />
             </label>}
-            <div className="w-9 h-9 rounded-full bg-color-secondary-bg flex-shrink-0 flex items-center justify-center cursor-pointer">
+            <button type="submit" disabled={type == 'comment' ? isLoadingComment : isLoading} className="w-9 h-9 rounded-full bg-color-secondary-bg flex-shrink-0 flex items-center justify-center cursor-pointer">
                <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path className="fill-color-primary-text" d="M17.5349 2.03263C18.4239 1.722 19.2779 2.576 18.9673 3.465L13.7829 18.2787C13.446 19.2395 12.1073 19.2937 11.6943 18.3636L9.19265 12.7356L12.7137 9.21375C12.8296 9.08935 12.8927 8.92481 12.8897 8.75479C12.8867 8.58478 12.8178 8.42257 12.6976 8.30233C12.5773 8.18209 12.4151 8.11322 12.2451 8.11022C12.0751 8.10722 11.9106 8.17033 11.7862 8.28625L8.26428 11.8073L2.63628 9.30563C1.70615 8.89175 1.76128 7.55387 2.72115 7.217L17.5349 2.03263Z" />
                </svg>
-            </div>
-         </div>
-         {photoPreview && <div className="flex justify-center w-3/4 py-3 relative mx-auto">
-            <img className="w-full rounded-2xl" src={photoPreview} alt="uploaded photo" />
+            </button>
+         </form >
+         {fileInput && <div className="flex justify-center w-3/4 py-3 relative mx-auto">
+            <img className="w-full rounded-2xl" src={`data:image/png;base64${fileInput}`} alt="uploaded photo" />
             <div onClick={resetPhotohandler} className="flex absolute top-5 right-2 justify-center items-center flex-shrink-0 w-5 h-5 rounded-full bg-color-secondary-bg cursor-pointer">
                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path className="stroke-color-primary-text" d="M1 1L10 10M1 10L10 1" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                </svg>
             </div>
-         </div>}
+         </div>
+         }
       </>
    )
 }

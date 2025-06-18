@@ -14,10 +14,18 @@ export const likesApi = createApi({
             method: 'POST'
          }),
          invalidatesTags: ['likes']
+      }),
+      deleteLike: builder.mutation<void, string>({
+         query: (id) => ({
+            url: `likes/${id}`,
+            method: 'DELETE'
+         }),
+         invalidatesTags: ['likes']
       })
    })
 })
 
 export const {
-   useCreateLikeMutation
+   useCreateLikeMutation,
+   useDeleteLikeMutation
 } = likesApi

@@ -4,6 +4,7 @@ import { reportsApi } from "../services/reportsApi";
 import { usersApi } from "../services/usersApi";
 import { likesApi } from "../services/likesApi";
 import { commentsApi } from "../services/commentsApi";
+import userReducer from "./slices/userSlice";
 
 export const store = configureStore({
    reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
       [reportsApi.reducerPath]: reportsApi.reducer,
       [likesApi.reducerPath]: likesApi.reducer,
       [commentsApi.reducerPath]: commentsApi.reducer,
+      user: userReducer
    },
    middleware: (getDefaultMiddleware) => getDefaultMiddleware()
       .concat(postsApi.middleware)

@@ -1,14 +1,17 @@
 import axios from "axios"
 import { useState } from "react"
 import { API_URL } from "../services/apiUrl"
+import { useAppDispatch } from "../store/hooks"
+import { signIn } from "../store/slices/userSlice"
 
-const SideBarLeftSignIn = ({ setVisibleForm, setAuthorized }: { setVisibleForm: Function, setAuthorized: Function }) => {
+const SideBarLeftSignIn = ({ setVisibleForm }: { setVisibleForm: Function }) => {
    const [username, setUsername] = useState<string>('')
    const [password, setPassword] = useState<string>('')
 
    const [passwordVisible, setPasswordVisible] = useState<boolean>(false)
    const [dangerousAlert, setDangerousAlert] = useState<string>('')
    const [isLoading, setIsLoading] = useState<boolean>(false)
+   const dispatch = useAppDispatch()
 
    const formSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
@@ -24,15 +27,16 @@ const SideBarLeftSignIn = ({ setVisibleForm, setAuthorized }: { setVisibleForm: 
       try {
          const res = await axios.get(`${API_URL}users?username=${username}`);
 
-         if (res.data.length) {
-            localStorage.setItem('user', JSON.stringify((res.data[0])))
-            setAuthorized(true)
+         if (res.data.length && res.data[0].password == password) {
+            dispatch(signIn(res.data[0]))
+         } else {
+            throw new Error
          }
 
          setUsername('')
          setPassword('')
-      } catch (err) {
-         setDangerousAlert(`Something went wrong`)
+      } catch (_) {
+         setDangerousAlert(`Login or password entered incorrectly`)
       } finally {
          setIsLoading(false)
       }
