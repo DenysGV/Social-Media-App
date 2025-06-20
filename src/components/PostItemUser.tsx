@@ -12,8 +12,8 @@ const PostItemUser = ({ userId, createTimestamp }: { userId: string, createTimes
          {isError && <p className="alert_dangerous">User is not defined</p>}
          {user &&
             <div className="flex gap-2 items-center cursor-pointer">
-               <div className="w-11 h-11 rounded-full">
-                  <img className="w-full h-full" src="/user-logo.png" alt="user logo" />
+               <div className="w-11 h-11 rounded-full overflow-hidden">
+                  <img className="w-full h-full" src={user.avatar ? `data:image/png;base64${user.avatar}` : '/user-logo.png'} alt="user logo" />
                </div>
                <div>
                   <p className="text-xxs text-color-primary-text opacity-60">@{user.username}</p>

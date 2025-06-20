@@ -1,35 +1,37 @@
 import { useState } from "react"
 import SideBarLeftUserSkillsItem from "./SideBarLeftUserSkillsItem"
 
-const UserEditForm = ({ type, onSubmithandler }: { type: string, onSubmithandler: Function }) => {
-   const [text, setText] = useState<string>('')
+const UserEditForm = ({ type, onSubmitHandler, initialValue }: { type: string, onSubmitHandler: Function, initialValue: string[] | string }) => {
+   const [text, setText] = useState<string>(Array.isArray(initialValue) ? '' : initialValue)
    const password = type == "password" ? useState<boolean>(false) : null
-   const [skills, setSkills] = useState<string[]>([])
+   const [skills, setSkills] = useState<string[]>(Array.isArray(initialValue) ? initialValue : [])
 
    const onChangehandler = (e: React.ChangeEvent<HTMLInputElement>) => {
       setText(e.target.value)
    }
 
-   const onKeyDownhandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+   const onKeyDownhandler = (e: React.KeyboardEvent<HTMLFormElement>) => {
       if (type != 'skills') {
          return
       }
 
       if (e.key === 'Enter') {
+         e.preventDefault()
+
          setSkills([...skills, text])
          setText('')
       }
    }
 
    return (
-      <form onSubmit={(e) => { onSubmithandler(e, text) }}>
+      <form onSubmit={(e) => { onSubmitHandler(e, type == 'skills' ? skills : text, type) }} onKeyDown={onKeyDownhandler}>
          <p className="text-sm text-color-primary-text pb-2">Edit {type}</p>
-         {!!skills.length && <div className="flex flex-wrap gap-2 pt-1 pb-2">
+         {type == 'skills' && !!skills.length && <div className="flex flex-wrap gap-2 pt-1 pb-2">
             {skills.map((item, index) => (<SideBarLeftUserSkillsItem key={index} skillName={item} type="editable" id={++index} setSkills={setSkills} />))}
          </div>}
          {password ?
             <div className="relative mb-2">
-               <input className="w-full" type={password?.[0] ? `text` : 'password'} placeholder="password" />
+               <input className="w-full" type={password?.[0] ? `text` : 'password'} placeholder="password" value={text} onChange={onChangehandler} />
                <div className="absolute top-2 right-2.5 cursor-pointer">
                   {password?.[0] ?
                      <svg onClick={() => { password[1](false) }} width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -44,7 +46,7 @@ const UserEditForm = ({ type, onSubmithandler }: { type: string, onSubmithandler
                   }
                </div>
             </div> :
-            <input className="w-full mb-2" type="text" placeholder={type == 'skills' ? 'skills (enter to add)' : type} value={text} onChange={onChangehandler} onKeyDown={onKeyDownhandler} />}
+            <input className="w-full mb-2" type="text" placeholder={type == 'skills' ? 'skills (enter to add)' : type} value={text} onChange={onChangehandler} />}
 
          <button className="button" type="submit">Edit</button>
       </form>

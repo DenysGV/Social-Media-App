@@ -8,6 +8,7 @@ import type { IComment, IPost, IUser } from "../types/types"
 import { useGetUserByIdQuery } from "../services/usersApi"
 import { useGetPostByIdQuery } from "../services/postsApi"
 import { useGetCommentsQuery } from "../services/commentsApi"
+import { useAppSelector } from "../store/hooks"
 
 interface IPostItemProps extends IPost {
    isSidebarItem?: boolean
@@ -24,7 +25,9 @@ const PostItem = ({ userId, id, repostPostId, content, createTimestamp, isSideba
    let repostData: IPost | null = null
 
    const { data } = useGetUserByIdQuery(userId)
-   const user: IUser | undefined = data
+   const userPost: IUser | undefined = data
+
+   const user: IUser | null = useAppSelector((state) => state.user.user)
 
    const [showComments, setShowComments] = useState<boolean>(false)
 
@@ -40,8 +43,8 @@ const PostItem = ({ userId, id, repostPostId, content, createTimestamp, isSideba
          return
       }
 
-      if (user) {
-         setRepost(user.username)
+      if (userPost) {
+         setRepost(userPost.username)
       }
    }
 
@@ -95,7 +98,7 @@ const PostItem = ({ userId, id, repostPostId, content, createTimestamp, isSideba
             </div>}
             <PostItemActions isSidebarItem={isSidebarItem} repostHandler={repostHandler} setShowComments={setShowComments} showRepostButton={!repostPostId} postId={id} commentsLength={comments?.length} />
             {showComments && <PostItemComments replyHandler={replyHandler} comments={comments} />}
-            {!isSidebarItem && <>
+            {!isSidebarItem && user && <>
                <hr className="border-color-secondary-bg" />
 
                <div className="mt-3">
@@ -105,7 +108,7 @@ const PostItem = ({ userId, id, repostPostId, content, createTimestamp, isSideba
          </div>
 
          {repost && <div className="mt-3 p-3 bg-color-primary-bg rounded-2xl">
-            <PostBuilder type={'repost'} repostHandler={repostHandler} username={user?.username} postId={id} />
+            <PostBuilder type={'repost'} repostHandler={repostHandler} username={userPost?.username} postId={id} />
          </div>}
 
          <Modal open={userModal} setOpen={setUserModal}>

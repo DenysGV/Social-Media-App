@@ -1,11 +1,11 @@
-import { useAppDispatch } from "../store/hooks"
+import { Link } from "react-router-dom"
+import { useAppDispatch, useAppSelector } from "../store/hooks"
 import { logOut } from "../store/slices/userSlice"
 import type { IUser } from "../types/types"
 import SideBarLeftUserSkills from "./SideBarLeftUserSkills"
 
 const SideBarLeftUser = () => {
-   const storageUser = localStorage.getItem('user')
-   const userAuthorized: IUser | null = storageUser ? JSON.parse(storageUser) : null
+   const user: IUser | null = useAppSelector((store) => store.user.user)
    const dispatch = useAppDispatch()
 
    const leaveHandler = () => {
@@ -21,8 +21,8 @@ const SideBarLeftUser = () => {
                   <p className="text-sm text-color-primary-text text-center">1984</p>
                   <p className="text-xs text-color-primary-text opacity-80">Followers</p>
                </div>
-               <div className="w-20 h-20">
-                  <img className="w-full h-full" src="/user-logo.png" alt="user logo" />
+               <div className="w-20 h-20 rounded-full overflow-hidden">
+                  <img className="w-full h-full" src={user?.avatar ? `data:image/png;base64${user.avatar}` : '/user-logo.png'} alt="user logo" />
                </div>
                <div>
                   <p className="text-sm text-color-primary-text text-center">1984</p>
@@ -30,12 +30,14 @@ const SideBarLeftUser = () => {
                </div>
             </div>
             <div className="flex flex-col items-center mt-5 mb-4">
-               <p className="text-sm text-color-primary-text pt-1">{userAuthorized?.name}</p>
-               <p className="text-xxs text-color-primary-text opacity-60">@{userAuthorized?.username}</p>
+               <p className="text-sm text-color-primary-text pt-1">{user?.name}</p>
+               <p className="text-xxs text-color-primary-text opacity-60">@{user?.username}</p>
             </div>
-            {userAuthorized?.about && <p className="pb-5 text-xs px-3 text-center text-color-primary-text">{userAuthorized?.about}</p>}
+            {user?.about && <p className="pb-5 text-xs px-3 text-center text-color-primary-text">{user?.about}</p>}
             <div className="px-1 pb-1 flex gap-2">
-               <div className="button">My Profile</div>
+               <Link to={`/user/${user?.id}`} className="button">
+                  My Profile
+               </Link>
                <div onClick={leaveHandler} className="p-2 flex-shrink-0 text-sm text-color-primary-text rounded-2xl cursor-pointer bg-color-secondary-bg">
                   <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                      <path className="fill-color-primary-text" fillRule="evenodd" clipRule="evenodd" d="M19.1837 8.89499C19.3111 8.78895 19.4753 8.73781 19.6403 8.75281C19.8053 8.76781 19.9576 8.84773 20.0637 8.97499L22.6675 12.1C22.7689 12.2278 22.8163 12.3902 22.7996 12.5525C22.7829 12.7148 22.7033 12.8642 22.578 12.9686C22.4527 13.0731 22.2914 13.1244 22.1288 13.1115C21.9661 13.0987 21.8149 13.0228 21.7075 12.9L19.1037 9.77499C18.9977 9.64767 18.9466 9.48345 18.9616 9.31843C18.9766 9.15341 19.0565 9.00111 19.1837 8.89499Z" />
@@ -46,7 +48,7 @@ const SideBarLeftUser = () => {
                </div>
             </div>
          </div>
-         <SideBarLeftUserSkills />
+         <SideBarLeftUserSkills skills={user?.skills} />
       </div>
    )
 }

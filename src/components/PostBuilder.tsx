@@ -126,14 +126,18 @@ const PostBuilder = ({ type, postId, replyId, repostHandler, username, replyHand
       }
    }
 
+   if (!user) {
+      return
+   }
+
    return (
       <>
          {dangerousAlert && <p className="alert_dangerous">{dangerousAlert}</p>}
          {isSuccess && <p className="alert_success">Post created successfully</p>}
          {isSuccessComment && <p className="alert_success">Comment created successfully</p>}
          <form className="flex gap-3 items-end" onSubmit={submitFormHandler}>
-            <div className="w-9 h-9 flex-shrink-0">
-               <img src="/user-logo.png" alt="user logo" className="w-full h-full" />
+            <div className="w-9 h-9 flex-shrink-0 rounded-full overflow-hidden">
+               <img className="w-full h-full" src={user.avatar ? `data:image/png;base64${user.avatar}` : '/user-logo.png'} alt="user logo" />
             </div>
             <div className="w-full">
                {username && (type == "comment" || type == "repost") && <div onClick={() => { cancelResponseHandler() }} className="flex gap-2 items-center px-2 py-1 mb-2 bg-color-secondary-bg w-fit rounded-2xl cursor-pointer">
