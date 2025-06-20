@@ -36,6 +36,11 @@ export interface IComment {
    createTimestamp: number,
 }
 
+export interface ICommentThree extends IComment {
+   replyComment?: ICommentThree[],
+   likes: number
+}
+
 export interface IReport {
    postId: string,
    userId: string,

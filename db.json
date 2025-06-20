@@ -95,12 +95,28 @@
       "createTimestamp": 1750245725850
     },
     {
-      "id": "1750247929033",
+      "id": "1750334489696",
       "postId": "1750193487717",
       "userId": "1750080374182",
-      "text": "comment reply",
-      "createTimestamp": 1750247929033,
-      "replyId": "1750080374182"
+      "text": "reply comment",
+      "createTimestamp": 1750334489696,
+      "replyId": "1750233999744"
+    },
+    {
+      "id": "1750358399546",
+      "postId": "1750193487717",
+      "userId": "1750080374182",
+      "text": "reply 2",
+      "createTimestamp": 1750358399546,
+      "replyId": "1750233999744"
+    },
+    {
+      "id": "1750359194474",
+      "postId": "1750193487717",
+      "userId": "1750080374182",
+      "text": "reply reply",
+      "createTimestamp": 1750359194474,
+      "replyId": "1750334489696"
     }
   ],
   "reports": []

@@ -90,3 +90,26 @@ input {
 .alert_success {
    @apply text-sm text-green-500
 }
+
+@keyframes fadeIn {
+   from {
+      opacity: 0;
+   }
+   to {
+      opacity: 1;
+   }
+}
+@keyframes fadeOut {
+   from {
+      opacity: 1;
+   }
+   to {
+      opacity: 0;
+   }
+}
+.animate-fade__in {
+   animation: fadeIn 0.5s linear;
+}
+.animate-fade__out {
+   animation: fadeOut 0.5s linear;
+}

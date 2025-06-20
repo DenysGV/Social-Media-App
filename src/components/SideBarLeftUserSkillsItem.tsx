@@ -12,7 +12,7 @@ const SideBarLeftUserSkillsItem = ({ skillName, type, id, setSkills }: { skillNa
             <p className="text-color-primary-text text-xxs">{skillName}</p>
             <div onClick={removeSkillHandler} className="cursor-pointer">
                <svg width="6" height="6" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path className="stroke-color-primary-text" d="M1 1L10 10M1 10L10 1" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                  <path className="stroke-color-primary-text" d="M1 1L10 10M1 10L10 1" strokeOpacity="0.8" strokeLinecap="round" strokeLinejoin="round" />
                </svg>
             </div>
          </div>}
