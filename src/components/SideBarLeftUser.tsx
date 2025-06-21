@@ -3,9 +3,13 @@ import { useAppDispatch, useAppSelector } from "../store/hooks"
 import { logOut } from "../store/slices/userSlice"
 import type { IUser } from "../types/types"
 import SideBarLeftUserSkills from "./SideBarLeftUserSkills"
+import { useGetAllSubscribersQuery } from "../services/subscribersApi"
 
 const SideBarLeftUser = () => {
    const user: IUser | null = useAppSelector((store) => store.user.user)
+   const { data } = useGetAllSubscribersQuery()
+   let subscribers = data?.filter(item => item.toUserId == user?.id)
+   let subscriptions = data?.filter(item => item.fromUserId == user?.id)
    const dispatch = useAppDispatch()
 
    const leaveHandler = () => {
@@ -18,14 +22,14 @@ const SideBarLeftUser = () => {
          <div className="p-1 rounded-b-2xl rounded-bl-2xl bg-color-secondary-bg">
             <div className="flex justify-center items-end gap-3 -mt-10">
                <div>
-                  <p className="text-sm text-color-primary-text text-center">1984</p>
+                  <p className="text-sm text-color-primary-text text-center">{subscribers ? subscribers.length : 0}</p>
                   <p className="text-xs text-color-primary-text opacity-80">Followers</p>
                </div>
                <div className="w-20 h-20 rounded-full overflow-hidden">
                   <img className="w-full h-full" src={user?.avatar ? `data:image/png;base64${user.avatar}` : '/user-logo.png'} alt="user logo" />
                </div>
                <div>
-                  <p className="text-sm text-color-primary-text text-center">1984</p>
+                  <p className="text-sm text-color-primary-text text-center">{subscriptions ? subscriptions.length : 0}</p>
                   <p className="text-xs text-color-primary-text opacity-80">Following</p>
                </div>
             </div>

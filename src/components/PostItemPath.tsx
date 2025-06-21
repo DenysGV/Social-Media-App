@@ -9,7 +9,7 @@ const PostItemPath = ({ postId }: { postId: string }) => {
       setDangerousAlert('')
 
       try {
-         await navigator.clipboard.writeText(`${window.location.href}${postId}`)
+         await navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`)
          setIsSuccess('Successfully copy')
       } catch (err) {
          setDangerousAlert('Error while copying')
@@ -22,7 +22,7 @@ const PostItemPath = ({ postId }: { postId: string }) => {
          {isSuccess && <p className="alert_success">{isSuccess}</p>}
          <div className="flex gap-2">
             <div className="py-2 px-3 w-full rounded-2xl bg-color-secondary-bg">
-               <p className="text-color-primary-text text-sm opacity-80">{window.location.href}{postId}</p>
+               <p className="text-color-primary-text text-sm opacity-80">{window.location.origin}/post/{postId}</p>
             </div>
             <div className="p-2 flex justify-center items-center rounded-2xl cursor-pointer bg-color-secondary-bg" onClick={() => { copyHandler() }}>
                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">

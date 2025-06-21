@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom"
 import { useGetUserByIdQuery } from "../services/usersApi"
 import type { IUser } from "../types/types"
 import timeAgo from "../utils/timeAgo"
 
 const PostItemUser = ({ userId, createTimestamp }: { userId: string, createTimestamp: number }) => {
    const { data, isError } = useGetUserByIdQuery(userId)
+   const navigate = useNavigate()
 
    const user: IUser | undefined = data
 
@@ -11,7 +13,7 @@ const PostItemUser = ({ userId, createTimestamp }: { userId: string, createTimes
       <>
          {isError && <p className="alert_dangerous">User is not defined</p>}
          {user &&
-            <div className="flex gap-2 items-center cursor-pointer">
+            <div className="flex gap-2 items-center cursor-pointer" onClick={() => { navigate(`/user/${userId}`) }}>
                <div className="w-11 h-11 rounded-full overflow-hidden">
                   <img className="w-full h-full" src={user.avatar ? `data:image/png;base64${user.avatar}` : '/user-logo.png'} alt="user logo" />
                </div>

@@ -4,6 +4,8 @@ import { useCreateReportMutation } from "../services/reportsApi"
 import type { IReport, IUser } from "../types/types"
 import PostItemPath from "./PostItemPath"
 import { useAppSelector } from "../store/hooks"
+import axios from "axios"
+import { API_URL } from "../services/apiUrl"
 
 const ModalReport = ({ postId, isOpen, setIsOpen }: { postId: string, isOpen: boolean, setIsOpen: Function }) => {
    const [dangerousAlert, setDangerousAlert] = useState<string>('')
@@ -13,18 +15,28 @@ const ModalReport = ({ postId, isOpen, setIsOpen }: { postId: string, isOpen: bo
 
    const user: IUser | null = useAppSelector((state) => state.user.user)
 
-   const submitReportHandler = (e: React.FormEvent<HTMLFormElement>) => {
+   const submitReportHandler = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
 
       if (user) {
-         const newReport: IReport = {
-            id: `${new Date().getTime()}`,
-            postId: postId,
-            userId: user?.id,
-            text: reportText,
-         }
-
          try {
+            const res = await axios.get(`${API_URL}reports?userId=${user.id}&postId=${postId}`)
+            if (res.data) {
+               const filtredRes: IReport[] = res.data.filter((item: IReport) => item.postId == postId && item.userId == user.id)
+
+               if (filtredRes.length) {
+                  setDangerousAlert('The report has already been sent')
+                  return
+               }
+            }
+
+            const newReport: IReport = {
+               id: `${new Date().getTime()}`,
+               postId: postId,
+               userId: user?.id,
+               text: reportText,
+            }
+
             createRepost(newReport)
          } catch (err) {
             setDangerousAlert('Failed to sent a report, please try again')

@@ -47,3 +47,9 @@ export interface IReport {
    userId: string,
    text: string,
 }
+
+export interface ISubscribers {
+   id: string,
+   fromUserId: string,
+   toUserId: string
+}

@@ -5,6 +5,7 @@ import { usersApi } from "../services/usersApi";
 import { likesApi } from "../services/likesApi";
 import { commentsApi } from "../services/commentsApi";
 import userReducer from "./slices/userSlice";
+import { subscribersApi } from "../services/subscribersApi";
 
 export const store = configureStore({
    reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
       [reportsApi.reducerPath]: reportsApi.reducer,
       [likesApi.reducerPath]: likesApi.reducer,
       [commentsApi.reducerPath]: commentsApi.reducer,
+      [subscribersApi.reducerPath]: subscribersApi.reducer,
       user: userReducer
    },
    middleware: (getDefaultMiddleware) => getDefaultMiddleware()
@@ -21,6 +23,7 @@ export const store = configureStore({
       .concat(reportsApi.middleware)
       .concat(likesApi.middleware)
       .concat(commentsApi.middleware)
+      .concat(subscribersApi.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>

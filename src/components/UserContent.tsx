@@ -4,8 +4,9 @@ import SideBarLeftUserSkills from "./SideBarLeftUserSkills"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { API_URL } from "../services/apiUrl"
-import type { IPost, IUser } from "../types/types"
+import type { IPost, ISubscribers, IUser } from "../types/types"
 import { useAppSelector } from "../store/hooks"
+import { useAddSubscriberMutation, useDeleteSubscriberMutation, useGetAllSubscribersQuery } from "../services/subscribersApi"
 
 const UserContent = () => {
    const user: IUser | null = useAppSelector((state) => state.user.user)
@@ -13,8 +14,17 @@ const UserContent = () => {
    const [userData, setUserData] = useState<IUser | null>(null)
    const [userPosts, setUserPosts] = useState<IPost[] | null>(null)
    const [dangerousAlert, setDangerousAlert] = useState<string>('')
+   const [isLoading, setIsLoading] = useState<boolean>(false)
+   const [isSubscribed, setIsSubscribed] = useState<string>('')
+   const [addSubscriber] = useAddSubscriberMutation()
+   const [deleteSubscriber] = useDeleteSubscriberMutation()
+   const { data } = useGetAllSubscribersQuery()
+   let subscribers = data?.filter(item => item.toUserId == userData?.id)
+   let subscriptions = data?.filter(item => item.fromUserId == userData?.id)
 
    const getUserData = async () => {
+      setIsLoading(true)
+
       try {
          const resUserData = await axios.get(`${API_URL}users/${userId}`)
 
@@ -29,6 +39,26 @@ const UserContent = () => {
          }
       } catch (err) {
          setDangerousAlert('Cant fetch user data')
+      } finally {
+         setIsLoading(false)
+      }
+   }
+
+   const subscribeHandler = () => {
+      if (user && userData) {
+         if (isSubscribed) {
+            setIsSubscribed('')
+            deleteSubscriber(isSubscribed)
+         } else {
+            const newSubscriber: ISubscribers = {
+               id: `${new Date().getTime()}`,
+               fromUserId: user.id,
+               toUserId: userData?.id,
+            }
+
+            setIsSubscribed(newSubscriber.id)
+            addSubscriber(newSubscriber).unwrap()
+         }
       }
    }
 
@@ -36,11 +66,26 @@ const UserContent = () => {
       if (userId) {
          getUserData()
       }
-   }, [])
+   }, [userId])
+
+   useEffect(() => {
+      if (user && userData && data) {
+         const foundSubscription = data.find(item => item.fromUserId === user.id && item.toUserId === userData.id);
+         if (foundSubscription) {
+            setIsSubscribed(foundSubscription.id)
+         }
+      }
+   }, [user, userData, data])
 
    if (dangerousAlert) {
       return <div className="w-2/4 pt-5">
          <p className="alert_dangerous">{dangerousAlert}</p>
+      </div>
+   }
+
+   if (isLoading) {
+      return <div className="w-2/4 pt-5">
+         <div className="animate-spin w-20 h-20 rounded-full border border-dashed border-color-primary-text mx-auto"></div>
       </div>
    }
 
@@ -69,7 +114,24 @@ const UserContent = () => {
                   </p>
                </div>
             </div>
-            <SideBarLeftUserSkills skills={userData?.skills} />
+            <div className="flex gap-5">
+               <div className="w-2/4 flex flex-col items-center pt-3">
+                  <div className="flex gap-10 py-3">
+                     <div>
+                        <p className="text-sm text-color-primary-text text-center">{subscribers ? subscribers.length : 0}</p>
+                        <p className="text-xs text-color-primary-text opacity-80">Followers</p>
+                     </div>
+                     <div>
+                        <p className="text-sm text-color-primary-text text-center">{subscriptions ? subscriptions.length : 0}</p>
+                        <p className="text-xs text-color-primary-text opacity-80">Following</p>
+                     </div>
+                  </div>
+                  {user && user.id != userData?.id && <div onClick={() => { subscribeHandler() }} className="button">{isSubscribed ? 'Unsubscribe' : 'Subscribe'}</div>}
+               </div>
+               <div className="w-2/4">
+                  <SideBarLeftUserSkills skills={userData?.skills} />
+               </div>
+            </div>
          </div>
          <div className="mt-5">
             {userPosts?.map(item => <PostItem key={item.id} {...item} />)}
