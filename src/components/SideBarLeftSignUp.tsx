@@ -79,7 +79,10 @@ const SideBarLeftSignUp = ({ setVisibleForm }: { setVisibleForm: Function }) => 
             <p className="text-xs text-color-primary-text">Already have an account ?</p>
             <p onClick={() => { setVisibleForm('sign in') }} className="text-xs text-color-primary-text cursor-pointer">sign in</p>
          </div>
-         <button type="submit" className="button" disabled={isLoading}>Sign in</button>
+         <button type="submit" className="button flex gap-2" disabled={isLoading}>
+            Sign in
+            {isLoading && <div className="animate-spin w-5 h-5 rounded-full border border-dashed border-color-primary-text"></div>}
+         </button>
       </form>
    )
 }

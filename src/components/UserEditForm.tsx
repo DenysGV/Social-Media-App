@@ -1,7 +1,7 @@
 import { useState } from "react"
 import SideBarLeftUserSkillsItem from "./SideBarLeftUserSkillsItem"
 
-const UserEditForm = ({ type, onSubmitHandler, initialValue }: { type: string, onSubmitHandler: Function, initialValue: string[] | string }) => {
+const UserEditForm = ({ type, onSubmitHandler, setOpen, isLoading, initialValue }: { type: string, onSubmitHandler: Function, setOpen: Function, isLoading: boolean, initialValue: string[] | string }) => {
    const [text, setText] = useState<string>(Array.isArray(initialValue) ? '' : initialValue)
    const password = type == "password" ? useState<boolean>(false) : null
    const [skills, setSkills] = useState<string[]>(Array.isArray(initialValue) ? initialValue : [])
@@ -24,7 +24,7 @@ const UserEditForm = ({ type, onSubmitHandler, initialValue }: { type: string, o
    }
 
    return (
-      <form onSubmit={(e) => { onSubmitHandler(e, type == 'skills' ? skills : text, type) }} onKeyDown={onKeyDownhandler}>
+      <form onSubmit={(e) => { onSubmitHandler(e, type == 'skills' ? skills : text, type, setOpen) }} onKeyDown={onKeyDownhandler}>
          <p className="text-sm text-color-primary-text pb-2">Edit {type}</p>
          {type == 'skills' && !!skills.length && <div className="flex flex-wrap gap-2 pt-1 pb-2">
             {skills.map((item, index) => (<SideBarLeftUserSkillsItem key={index} skillName={item} type="editable" id={++index} setSkills={setSkills} />))}
@@ -48,7 +48,7 @@ const UserEditForm = ({ type, onSubmitHandler, initialValue }: { type: string, o
             </div> :
             <input className="w-full mb-2" type="text" placeholder={type == 'skills' ? 'skills (enter to add)' : type} value={text} onChange={onChangehandler} />}
 
-         <button className="button" type="submit">Edit</button>
+         <button className="button" disabled={isLoading} type="submit">Edit</button>
       </form>
    )
 }

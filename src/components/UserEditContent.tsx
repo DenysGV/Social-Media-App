@@ -79,10 +79,12 @@ const UserEditContent = () => {
       }
    }
 
-   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>, data: string & string[], type: string) => {
+   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>, data: string & string[], type: string, setState: Function) => {
       e.preventDefault()
 
       editUserDataHandler(data, type)
+
+      setState(false)
    }
 
    const toBase64 = (file: File): Promise<string | ArrayBuffer | null> => new Promise((resolve) => {
@@ -103,11 +105,18 @@ const UserEditContent = () => {
       }
    }, [fileInput])
 
+   if (isLoading) {
+      return <div className="w-2/4 pt-5">
+         <div className="animate-spin w-20 h-20 rounded-full border border-dashed border-color-primary-text mx-auto"></div>
+      </div>
+   }
+
    return (
       <div className="w-2/4 pt-5">
          <div className="bg-color-primary-bg rounded-2xl px-3 py-6">
             <p className="text-base pb-2.5 text-color-primary-text">Edit profile</p>
             {isSuccess && <p className="alert_success">Profile edited successfully</p>}
+            {dangerousAlert && <p className="alert_dangerous">{dangerousAlert}</p>}
             <div className="flex gap-3">
                <div className="w-20 h-20 flex-shrink-0 relative overflow-hidden rounded-full">
                   {!fileInput && <img className="w-full h-full rounded-full overflow-hidden" src={user?.avatar ? `data:image/png;base64${user.avatar}` : '/user-logo.png'} alt="user logo" />}
@@ -208,10 +217,9 @@ const UserEditContent = () => {
 
          {Object.keys(modalsObj).map(item => (
             <>
-               {dangerousAlert && <p className="alert_dangerous">{dangerousAlert}</p>}
                <Modal key={item} setOpen={modalsObj[item].setModal} open={modalsObj[item].modal}>
                   <>
-                     <UserEditForm type={item} onSubmitHandler={onSubmitHandler} initialValue={user ? user[item as keyof IUser] ?? "" : ''} />
+                     <UserEditForm type={item} onSubmitHandler={onSubmitHandler} setOpen={modalsObj[item].setModal} isLoading={isLoading} initialValue={user ? user[item as keyof IUser] ?? "" : ''} />
                   </>
                </Modal>
             </>

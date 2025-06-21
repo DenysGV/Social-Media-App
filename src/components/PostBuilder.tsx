@@ -85,7 +85,7 @@ const PostBuilder = ({ type, postId, replyId, repostHandler, username, replyHand
 
       if (user) {
          const newPost: IPost = {
-            id: `new Date().getTime()`,
+            id: `${new Date().getTime()}`,
             userId: user?.id,
             createTimestamp: new Date().getTime(),
             content: {}

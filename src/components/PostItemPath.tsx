@@ -1,0 +1,38 @@
+import { useState } from "react"
+
+const PostItemPath = ({ postId }: { postId: string }) => {
+   const [dangerousAlert, setDangerousAlert] = useState<string>('')
+   const [isSuccess, setIsSuccess] = useState<string>('')
+
+   const copyHandler = async () => {
+      setIsSuccess('')
+      setDangerousAlert('')
+
+      try {
+         await navigator.clipboard.writeText(`${window.location.href}${postId}`)
+         setIsSuccess('Successfully copy')
+      } catch (err) {
+         setDangerousAlert('Error while copying')
+      }
+   }
+
+   return (
+      <div>
+         {dangerousAlert && <p className="alert_dangerous">{dangerousAlert}</p>}
+         {isSuccess && <p className="alert_success">{isSuccess}</p>}
+         <div className="flex gap-2">
+            <div className="py-2 px-3 w-full rounded-2xl bg-color-secondary-bg">
+               <p className="text-color-primary-text text-sm opacity-80">{window.location.href}{postId}</p>
+            </div>
+            <div className="p-2 flex justify-center items-center rounded-2xl cursor-pointer bg-color-secondary-bg" onClick={() => { copyHandler() }}>
+               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path className="stroke-color-primary-text" d="M4.5 8.25C4.5 6.129 4.5 5.06775 5.15925 4.40925C5.81775 3.75 6.879 3.75 9 3.75H11.25C13.371 3.75 14.4323 3.75 15.0908 4.40925C15.75 5.06775 15.75 6.129 15.75 8.25V12C15.75 14.121 15.75 15.1823 15.0908 15.8408C14.4323 16.5 13.371 16.5 11.25 16.5H9C6.879 16.5 5.81775 16.5 5.15925 15.8408C4.5 15.1823 4.5 14.121 4.5 12V8.25Z" />
+                  <path className="stroke-color-primary-text" d="M4.5 14.25C3.90326 14.25 3.33097 14.0129 2.90901 13.591C2.48705 13.169 2.25 12.5967 2.25 12V7.5C2.25 4.67175 2.25 3.25725 3.129 2.379C4.008 1.50075 5.42175 1.5 8.25 1.5H11.25C11.8467 1.5 12.419 1.73705 12.841 2.15901C13.2629 2.58097 13.5 3.15326 13.5 3.75" />
+               </svg>
+            </div>
+         </div>
+      </div>
+   )
+}
+
+export default PostItemPath

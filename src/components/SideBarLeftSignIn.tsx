@@ -44,7 +44,9 @@ const SideBarLeftSignIn = ({ setVisibleForm }: { setVisibleForm: Function }) => 
 
    return (
       <form onSubmit={formSubmitHandler}>
-         <p className="pb-2 text-color-primary-text text-base">Sign in</p>
+         <div className="flex justify-between">
+            <p className="pb-2 text-color-primary-text text-base">Sign in</p>
+         </div>
          <div className="flex flex-col gap-2">
             {dangerousAlert && <p className="alert_dangerous">{dangerousAlert}</p>}
             <input value={username} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setUsername(e.target.value) }} type="text" placeholder="username" />
@@ -69,7 +71,10 @@ const SideBarLeftSignIn = ({ setVisibleForm }: { setVisibleForm: Function }) => 
             <p className="text-xs text-color-primary-text">Not registered yet ?</p>
             <p onClick={() => { setVisibleForm('sign up') }} className="text-xs text-color-primary-text cursor-pointer">sign up</p>
          </div>
-         <button type="submit" disabled={isLoading} className="button">Sign in</button>
+         <button type="submit" disabled={isLoading} className="button flex gap-2">
+            Sign in
+            {isLoading && <div className="animate-spin w-5 h-5 rounded-full border border-dashed border-color-primary-text"></div>}
+         </button>
       </form>
    )
 }

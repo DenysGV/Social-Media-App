@@ -85,10 +85,12 @@ input {
 }
 
 .alert_dangerous {
-   @apply text-sm text-red-500
+   animation: fadeInOut 3s linear;
+   @apply text-sm text-red-500 pb-2 h-0 invisible opacity-0
 }
 .alert_success {
-   @apply text-sm text-green-500
+   animation: fadeInOut 3s linear;
+   @apply text-sm text-green-500 pb-2 h-0 invisible opacity-0
 }
 
 @keyframes fadeIn {
@@ -105,6 +107,34 @@ input {
    }
    to {
       opacity: 0;
+   }
+}
+@keyframes fadeInOut {
+   0% {
+      height: 0;
+      visibility: hidden;
+   }
+   10% {
+      opacity: 0;
+   }
+   20% {
+      height: 30px;
+      visibility: visible;
+      opacity: 1;
+   }
+   70% {
+      opacity: 1;
+   }
+   80% {
+      height: 30px;
+      visibility: visible;
+   }
+   90% {
+      opacity: 0;
+   }
+   100% {
+      height: 0;
+      visibility: hidden;
    }
 }
 .animate-fade__in {

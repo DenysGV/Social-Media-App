@@ -42,6 +42,7 @@ export interface ICommentThree extends IComment {
 }
 
 export interface IReport {
+   id: string,
    postId: string,
    userId: string,
    text: string,

@@ -11,6 +11,14 @@ export const reportsApi = createApi({
          query: () => 'reports',
          providesTags: ['reports']
       }),
+      createReport: builder.mutation<IReport, IReport>({
+         query: (newReport) => ({
+            url: 'reports',
+            body: newReport,
+            method: 'POST'
+         }),
+         invalidatesTags: ['reports']
+      }),
       deleteReport: builder.mutation<void, string>({
          query: (id) => ({
             url: `reports/${id}`,
@@ -23,5 +31,6 @@ export const reportsApi = createApi({
 
 export const {
    useGetReportsQuery,
+   useCreateReportMutation,
    useDeleteReportMutation,
 } = reportsApi
