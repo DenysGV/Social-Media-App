@@ -6,9 +6,6 @@ const SearchBar = () => {
    const [search, setSearch] = useState<string>('')
    const { data: users, isLoading } = useSearchUserQuery(search)
 
-   console.log(users);
-
-
    return (
       <div className="relative w-full">
          <input type="text" placeholder="# Explore" value={search} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)} className="w-full" />

@@ -11,8 +11,8 @@ const SideBarLeftUserSkills = ({ skills }: { skills?: string[] }) => {
          <p className="text-base pb-2.5 text-color-primary-text">Skills</p>
          <div className="flex flex-wrap gap-2.5">
             {skills.length ?
-               skills.map(item => (
-                  <SideBarLeftUserSkillsItem skillName={item} type="fixed" />
+               skills.map((item, index) => (
+                  <SideBarLeftUserSkillsItem key={index} skillName={item} type="fixed" />
                )) :
                <p className="text-color-primary-text text-xs">Add skills at profile settings</p>
             }

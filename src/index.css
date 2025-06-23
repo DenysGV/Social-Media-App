@@ -37,7 +37,7 @@ footer, header, hgroup, menu, nav, section {
 html {
    height: 100%;
    background: var(--color-bg);
-   font-family: 'Montserrat'
+   font-family: 'Montserrat';
 }
 html.light {
    --color-primary-text: #1A1A1A;

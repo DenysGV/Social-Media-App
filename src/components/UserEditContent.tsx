@@ -123,9 +123,9 @@ const UserEditContent = () => {
                   {fileInput && <img className="w-full h-full rounded-full overflow-hidden" src={`${fileInput}`} alt="user logo" />}
                   <label className={`w-full h-full absolute -bottom-12 left-0 flex justify-center items-start cursor-pointer rounded-full`}>
                      <svg className="relative z-20 mt-2" width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.5 6.66667H12.5083M10.4167 17.5H5C4.33696 17.5 3.70107 17.2366 3.23223 16.7678C2.76339 16.2989 2.5 15.663 2.5 15V5C2.5 4.33696 2.76339 3.70107 3.23223 3.23223C3.70107 2.76339 4.33696 2.5 5 2.5H15C15.663 2.5 16.2989 2.76339 16.7678 3.23223C17.2366 3.70107 17.5 4.33696 17.5 5V10.4167" stroke="#D5D5D5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        <path d="M2.5 13.3333L6.66667 9.16667C7.44 8.4225 8.39333 8.4225 9.16667 9.16667L12.5 12.5" stroke="#D5D5D5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                        <path d="M11.6667 11.6667L12.5001 10.8333C13.0442 10.3092 13.6776 10.1542 14.2751 10.3675M15.8334 13.3333V18.3333M15.8334 18.3333L18.3334 15.8333M15.8334 18.3333L13.3334 15.8333" stroke="#D5D5D5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <path className="stroke-color-primary-text" d="M12.5 6.66667H12.5083M10.4167 17.5H5C4.33696 17.5 3.70107 17.2366 3.23223 16.7678C2.76339 16.2989 2.5 15.663 2.5 15V5C2.5 4.33696 2.76339 3.70107 3.23223 3.23223C3.70107 2.76339 4.33696 2.5 5 2.5H15C15.663 2.5 16.2989 2.76339 16.7678 3.23223C17.2366 3.70107 17.5 4.33696 17.5 5V10.4167" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <path className="stroke-color-primary-text" d="M2.5 13.3333L6.66667 9.16667C7.44 8.4225 8.39333 8.4225 9.16667 9.16667L12.5 12.5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <path className="stroke-color-primary-text" d="M11.6667 11.6667L12.5001 10.8333C13.0442 10.3092 13.6776 10.1542 14.2751 10.3675M15.8334 13.3333V18.3333M15.8334 18.3333L18.3334 15.8333M15.8334 18.3333L13.3334 15.8333" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                      </svg>
                      <div className="w-full h-full opacity-80 bg-color-primary-bg absolute z-10">
                      </div>
