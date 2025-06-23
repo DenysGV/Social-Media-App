@@ -7,6 +7,14 @@ export const usersApi = createApi({
    baseQuery: fetchBaseQuery({ baseUrl: API_URL }),
    tagTypes: ['users'],
    endpoints: (builder) => ({
+      getUserById: builder.query<IUser, string>({
+         query: (id) => `users/${id}`,
+         providesTags: (_, __, id) => [{ type: 'users', id }]
+      }),
+      searchUser: builder.query<IUser[], string>({
+         query: (searchQuery) => `users?name=${searchQuery}`,
+         providesTags: ['users'],
+      }),
       createUser: builder.mutation<IUser, IUser>({
          query: (newUser) => ({
             url: 'users',
@@ -14,10 +22,6 @@ export const usersApi = createApi({
             method: 'POST',
          }),
          invalidatesTags: ['users'],
-      }),
-      getUserById: builder.query<IUser, string>({
-         query: (id) => `users/${id}`,
-         providesTags: (_, __, id) => [{ type: 'users', id }]
       }),
       editUserData: builder.mutation<IUser, IUser>({
          query: (newUser) => ({
@@ -40,6 +44,7 @@ export const usersApi = createApi({
 export const {
    useCreateUserMutation,
    useGetUserByIdQuery,
+   useSearchUserQuery,
    useEditUserDataMutation,
    useDeleteUserMutation,
 } = usersApi

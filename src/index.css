@@ -39,6 +39,13 @@ html {
    background: var(--color-bg);
    font-family: 'Montserrat'
 }
+html.light {
+   --color-primary-text: #1A1A1A;
+   --color-highlight: #9B8700;
+   --color-bg: #FFFFFF;
+   --color-primary-bg: #F5F5F5;
+   --color-secondary-bg: #E8E8E8;
+}
 body {
    line-height: 1;
 }
