@@ -37,9 +37,8 @@ const PostItem = ({ userId, id, repostPostId, content, createTimestamp, isSideba
    const { data: dataComments } = useGetCommentsQuery(id)
    let comments: IComment[] = []
    if (dataComments) {
-      comments = dataComments?.filter(item => item.id == id)
+      comments = dataComments?.filter(item => item.postId == id)
    }
-
 
    const repostHandler = (resetRepost?: boolean) => {
       if (resetRepost) {

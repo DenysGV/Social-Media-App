@@ -118,7 +118,7 @@ const PostBuilder = ({ type, postId, replyId, repostHandler, username, replyHand
 
    const cancelResponseHandler = () => {
       if (type == "comment" && replyHandler) {
-         replyHandler(true)
+         replyHandler('', '', true)
       }
 
       if (type == "repost" && repostHandler) {
@@ -129,6 +129,9 @@ const PostBuilder = ({ type, postId, replyId, repostHandler, username, replyHand
    if (!user) {
       return
    }
+
+   console.log(username);
+
 
    return (
       <>
@@ -141,7 +144,7 @@ const PostBuilder = ({ type, postId, replyId, repostHandler, username, replyHand
             </div>
             <div className="w-full">
                {username && (type == "comment" || type == "repost") && <div onClick={() => { cancelResponseHandler() }} className="flex gap-2 items-center px-2 py-1 mb-2 bg-color-secondary-bg w-fit rounded-2xl cursor-pointer">
-                  <p className="text-xxs text-color-primary-text opacity-70">{type == "comment" ? "Reply" : "Repost"}: @{username}</p>
+                  <p className="text-xxs text-color-primary-text opacity-70">{(!!username.length && type == "comment") ? "Reply" : "Repost"}: @{username}</p>
                   <div className="opacity-70">
                      <svg width="6" height="6" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path className="stroke-color-primary-text" d="M1 1L10 10M1 10L10 1" strokeOpacity="0.8" strokeLinecap="round" strokeLinejoin="round" />

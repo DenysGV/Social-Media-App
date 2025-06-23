@@ -60,8 +60,8 @@ const PostItemCommentsItem = ({ userId, text, createTimestamp, id, replyHandler,
       <div>
          <div className="p-3 bg-color-secondary-bg rounded-2xl mt-5 animate-fade__in">
             <div className="flex gap-2 items-center cursor-pointer w-fit">
-               <div className="w-8 h-8 rounded-full">
-                  <img className="w-full h-full" src="/user-logo.png" alt="user logo" />
+               <div className="w-8 h-8 rounded-full overflow-hidden">
+                  <img className="w-full h-full" src={user ? `data:image/png;base64${user.avatar}` : '/user-logo.png'} alt="user logo" />
                </div>
                <div>
                   <div className="flex gap-2">
