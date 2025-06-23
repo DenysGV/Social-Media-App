@@ -18,6 +18,7 @@ export interface IUser {
    avatar?: Base64URLString,
    email: string,
    password: string,
+   isAdmin?: boolean
 }
 
 export interface ILike {
