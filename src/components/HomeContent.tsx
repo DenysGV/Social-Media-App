@@ -21,7 +21,7 @@ const HomeContent = () => {
          {user && <div className="mb-5 p-3 bg-color-primary-bg rounded-2xl">
             <PostBuilder type={'post'} />
          </div>}
-         {posts && posts.map(item => (
+         {posts && [...posts].sort((a, b) => b.createTimestamp - a.createTimestamp).map(item => (
             <PostItem key={item.id} {...item} />
          ))}
       </div>

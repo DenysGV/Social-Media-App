@@ -10,6 +10,7 @@ import { useGetCommentsQuery } from "../services/commentsApi"
 import { useAppSelector } from "../store/hooks"
 import ModalReport from "./ModalReport"
 import ModalDelete from "./ModalDelete"
+import { useNavigate } from "react-router-dom"
 
 interface IPostItemProps extends IPost {
    isSidebarItem?: boolean
@@ -24,6 +25,7 @@ const PostItem = ({ userId, id, repostPostId, content, createTimestamp, isSideba
       commentId: string
    } | null>(null)
    let repostData: IPost | null = null
+   const navigate = useNavigate()
 
    const { data } = useGetUserByIdQuery(userId)
    const userPost: IUser | undefined = data
@@ -81,7 +83,7 @@ const PostItem = ({ userId, id, repostPostId, content, createTimestamp, isSideba
 
    return (
       <div className="mb-5">
-         <div className={`p-3 bg-color-primary-bg rounded-2xl ${isSidebarItem && 'bg-color-secondary-bg'}`}>
+         <div onClick={() => { isSidebarItem && navigate(`/post/${id}`) }} className={`p-3 bg-color-primary-bg rounded-2xl ${isSidebarItem && 'bg-color-secondary-bg cursor-pointer'}`}>
             <div className="flex justify-between">
                <PostItemUser userId={userId} createTimestamp={createTimestamp} />
                <div className="flex gap-1 mt-1 mr-1 cursor-pointer" onClick={() => { openModalHandler() }}>

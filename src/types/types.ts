@@ -17,8 +17,7 @@ export interface IUser {
    skills: string[],
    avatar?: Base64URLString,
    email: string,
-   password: string,
-   isAdmin?: boolean
+   password: string
 }
 
 export interface ILike {
